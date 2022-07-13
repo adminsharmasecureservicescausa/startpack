@@ -1,5 +1,15 @@
 version: '3.8'
 
+secrets:
+  cf_api_email:
+    file: "./secrets/CF_API_EMAIL.secret"
+  cf_api_key:
+    file: "./secrets/CF_API_KEY.secret"
+  secret3:
+    file: "./secrets/secret3.secret"
+  secret4:
+    file: "./secrets/secret4.secret"
+    
 x-service: &service
   logging:
     driver: json-file
@@ -17,6 +27,16 @@ services:
     ports:
       - 80:80
       - 443:443
+    secrets:
+      - "cf_api_email"
+      - "cf_api_key"
+      - "secret3"
+      - "secret4"
+    environment:
+      - "CF_API_EMAIL=/run/secrets/cf_api_email"
+      - "CF_API_KEY_FILE=/run/secrets/cf_api_key"
+      - "secret3_FILE=/run/secrets/secret3"
+      - "secret4_FILE=/run/secrets/secret4"
     deploy:
       resources:
         reservations:
@@ -48,7 +68,7 @@ services:
         - traefik.http.routers.dashboard.rule=Host(`traefik.example.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
         - traefik.http.routers.dashboard.service=api@internal
         - traefik.http.routers.dashboard.middlewares=auth
-        - traefik.http.middlewares.auth.basicauth.users=test:$2y$10$CmrrAyFSLACEIjlRMRmTZuovDdhkm6FOzzOPPh.N2A8wVv6M83Rhy/,test2:$2y$10$CmrrAyFSLACEIjlRMRmTZuovDdhkm6FOzzOPPh.N2A8wVv6M83Rhy"
+        - traefik.http.middlewares.auth.basicauth.users=test:$TRAEFIK1,test2:$TRAEFIK2"
     # Dummy service for Swarm port detection. The port can be any valid integer value.
         - traefik.http.services.dummy-svc.loadbalancer.server.port=9999
     <<: *service
