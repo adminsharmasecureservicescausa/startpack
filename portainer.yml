@@ -29,7 +29,7 @@ services:
   # https://hub.docker.com/portainer/portainer-ce
   portainer:
     container_name: portainer
-    image: portainer/portainer-ce:alpine
+    image: portainer/portainer-ee
     deploy:
       mode: replicated
       replicas: 1
@@ -66,8 +66,8 @@ services:
       mode: global
       resources:
         reservations:
-          cpus: '0.01'
-          memory: 10M
+          cpus: '0.5'
+          memory: 100M
       placement:
         constraints:
           - node.platform.os == linux
