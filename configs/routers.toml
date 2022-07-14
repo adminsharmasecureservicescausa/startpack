@@ -1,0 +1,49 @@
+## Dynamic configuration
+[http.routers]
+  [http.routers.routermyresolver]
+    rule: "Host(`windock.sharmasecure.cloud`) && Path(`/bar`)"
+    entryPoints = ["websecure"]
+    service = "service-1"
+    priority = 5
+    [http.routers.routerbar.tls]
+	  certResolver ='myresolver'
+      [[http.routers.routerbar.tls.domains]]
+        main = "windock.sharmasecure.cloud"
+        sans = ["*.windock.sharmasecure.cloud"]
+
+[tcp.routers]
+  [tcp.routers.tcp-pritunl-a]
+    rule: 'HostSNIRegexp({subdomain:pritunl})'
+    entryPoints = ["94tcp", "95tcp"]
+    service = "service-pri-a"
+    priority = 1
+    [tcp.routers.routerbar.tls]
+	  passthrough = true
+  [tcp.routers.tcp-router]
+    rule: 'HostSNI(`*`)'
+    service = "service-2"
+    priority = 2
+    [tcp.routers.routerbar.tls]
+	  certResolver ='myresolver'
+      [tcp.routers.routerbar.tls.domains]
+        main = "windock.sharmasecure.cloud"
+        sans = ["*.windock.sharmasecure.cloud"]
+		
+[udp.routers]
+  [udp.routers.udp-pritunl-a]
+    rule: 'HostSNIRegexp({subdomain:pritunl})'
+    entryPoints = ["94udp", "95udp"]
+    service = "service-pri-b"
+    priority = 3
+    [udp.routers.routerbar.tls]
+	  passthrough = true
+  [udp.routers.tcp-router]
+    rule: 'HostSNI(`*`)'
+    service = "service-3"
+    priority = 4
+    [udp.routers.routerbar.tls]
+	  certResolver ='myresolver'
+      [udp.routers.routerbar.tls.domains]
+        main = "windock.sharmasecure.cloud"
+        sans = ["*.windock.sharmasecure.cloud"]
+		
